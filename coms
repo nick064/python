@@ -1,0 +1,180 @@
+This is my list of useful unix commands. 
+Everything starting with # should be treated as a command. Anything else - as a comment;
+Everything in < > tags is the name of something, variable, can be text or numbers. When a letter is capitalized, it stays that way.
+EXAMPLES are safe to run. There are also LOCATION additions regarding to the location of a file or folder. 
+
+
+Quick lesson on iptables: 
+
+-A - Append this rule to a rule chain. Valid chains for what we're doing are INPUT, FORWARD and OUTPUT, but we mostly deal with INPUT in this tutorial, which affects only incoming traffic.
+
+-L - List the current filter rules.
+
+-m conntrack - Allow filter rules to match based on connection state. Permits the use of the --ctstate option.
+
+--ctstate - Define the list of states for the rule to match on. Valid states are:
+
+    NEW - The connection has not yet been seen.
+    RELATED - The connection is new, but is related to another connection already permitted.
+    ESTABLISHED - The connection is already established.
+    INVALID - The traffic couldn't be identified for some reason. 
+
+-m limit - Require the rule to match only a limited number of times. Allows the use of the --limit option. Useful for limiting logging rules.
+
+    --limit - The maximum matching rate, given as a number followed by "/second", "/minute", "/hour", or "/day" depending on how often you want the rule to match. If this option is not used and -m limit is used, the default is "3/hour". 
+
+-p - The connection protocol used.
+
+--dport - The destination port(s) required for this rule. A single port may be given, or a range may be given as start:end, which will match all ports from start to end, inclusive.
+
+-j - Jump to the specified target. By default, iptables allows four targets:
+
+    ACCEPT - Accept the packet and stop processing rules in this chain.
+
+    REJECT - Reject the packet and notify the sender that we did so, and stop processing rules in this chain.
+
+    DROP - Silently ignore the packet, and stop processing rules in this chain.
+
+    LOG - Log the packet, and continue processing more rules in this chain. Allows the use of the --log-prefix and --log-level options. 
+
+--log-prefix - When logging, put this text before the log message. Use double quotes around the text to use.
+
+--log-level - Log using the specified syslog level. 7 is a good choice unless you specifically need something else.
+
+-i - Only match if the packet is coming in on the specified interface.
+
+-I - Inserts a rule. Takes two options, the chain to insert the rule into, and the rule number it should be.
+
+    -I INPUT 5 would insert the rule into the INPUT chain and make it the 5th rule in the list. 
+
+-v - Display more information in the output. Useful for if you have rules that look similar without using -v.
+
+-s --source - address[/mask] source specification
+
+-d --destination - address[/mask] destination specification
+
+-o --out-interface - output name[+] network interface name ([+] for wildcard) 
+
+Quick lesson on permissions: 
+
+4 read (r)
+2 write (w)
+1 execute (x)
+
+So, -rw-r--r-- would translate to: 
+
+rw- = 4+2+0; 4+2+0=6
+-r- = 0+4+0; 0+4+0=4
+-r- = 0+4+0; 0+4+0=4
+____________
+Permission for the file in question are 644.
+
+Check if service is running: 
+#service <servicename> status
+
+Change a Password for MySQL on via the terminal:
+#mysql -u root -p // u - user, p - password, will be prompted for credentials. 
+#use <mysql> // switch to database
+#update user set password=PASSWORD('<newpasswordhere>') where User='root'
+#flush privileges // reload privileges
+#quit 
+
+Change ownership of file/directory:
+#chown -R <user>:<group> <file/directory> // -R recursively, only for folders
+
+Change permissions of file/directory:
+#chmod -R <3_digit_perms> <file/directory>  
+
+List all users on system: 
+#cat /etc/passwd
+
+Show all mounted drives: 
+#df -aTh 
+
+Show kernel version and system architecture
+#uname -a
+
+Show all partitions registered on the system
+#cat /proc/partitions
+
+Show RAM total seen by the system
+#grep MemTotal /proc/meminfo
+
+Show CPU(s) info
+#grep "model name" /proc/cpuinfo
+
+Show info about disk (Can be sdb, sdc, etc...)
+#hdparm -i /dev/sda
+#smartctl -a /dev/sda
+#badblocks -sv (more info for badblocks at https://wiki.archlinux.org/index.php/badblocks) 
+
+Show tasks ONLY from a certain user: 
+#top -u <userID>
+
+Login to MySQL:
+#mysql -u root -p -h localhost
+
+Set timezone: 
+#dpkg-reconfigure tzdata
+
+Use of SCP:  
+From current host to remote host: 
+#scp -P <port_number_for_rm_host> file.ext your_username@remotehost:/some/remote/directory // -P can be left out if there is a service on Port 22
+From remote host to current host:
+#scp -P <port_number_for_yourhost> your_username@remotehost:file.ext /some/local/directory
+
+Wipe TXT/any file:
+#> /path/to/filename 
+
+Using Crontab; General Map:
+*     *     *   *    *        command to be executed
+-     -     -   -    -
+|     |     |   |    |
+|     |     |   |    +----- day of week (0 - 6) (Sunday=0)
+|     |     |   +------- month (1 - 12)
+|     |     +--------- day of month (1 - 31)
+|     +----------- hour (0 - 23)
++------------- min (0 - 59)
+
+Make sure that the script you're trying to run through a cron is executable (chmod +x). 
+#crontab -e (show crontab file)
+#crontab -l (list crons)
+
+Extraction for .tar.gz/.tar.bz2 files: 
+#tar xzvf file.tar.gz
+#tar xjvf file.tar.bz2
+
+Extract to a folder other than current: 
+#tar -C <DIRECTORY> file.ext
+
+How to install:
+If there is a README file with installation instructions, use that instead.
+1. Extract the files with one of the commands above
+2. Navigate to the folder
+        
+Run the following: 
+
+#./configure
+#make
+#make install
+
+Kill PulseAudio Daemon:
+#pulseaudio -k
+
+Start it: 
+#pulseaudio -D (daemon, root is a pain in the ass)
+
+Zip folder/single file: 
+#zip -r <archive_name.ext> /path/to/folder 
+#zip <archive_name.ext> /path/to/file.ext
+
+Inflate a file(size is defined by a single letter, eg. 10G, 3K, 420M): 
+#fallocate -l <filesize> file.ext
+
+Show active processes:
+#ps aux | grep <your_process_name>
+
+Show folders/files size: 
+#du -h 
+#du -a /path/to/directory
+!NOTE: DU is extremely useful, refer to <a href=http://www.linfo.org/du.html>this page</a> for an in-depth explanation.
